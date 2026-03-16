@@ -32,7 +32,6 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->index(['setting_id', 'sort']);
-            $table->index(['settable_type', 'settable_id']);
         });
     }
 

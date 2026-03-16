@@ -27,7 +27,7 @@ class SettingValue extends Model
         return $this->belongsTo(Setting::class);
     }
 
-    public function settable(): MorphTo
+    public function settableModel(): MorphTo
     {
         return $this->morphTo();
     }
