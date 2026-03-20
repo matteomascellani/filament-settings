@@ -36,6 +36,15 @@ class SettingsTable
 
                 TextColumn::make('value_type')
                     ->label('Tipo')
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'string' => 'Stringa',
+                        'color' => 'Colore',
+                        'number' => 'Numero',
+                        'boolean' => 'Booleano',
+                        'json' => 'JSON',
+                        'hours_days_range' => 'Range di ore e giorni',
+                        default => (string) ($state ?? '-'),
+                    })
                     ->badge()
                     ->sortable(),
 

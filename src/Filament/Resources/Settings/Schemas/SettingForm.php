@@ -45,6 +45,7 @@ class SettingForm
                                 'number' => 'Numero',
                                 'boolean' => 'Booleano',
                                 'json' => 'JSON',
+                                'hours_days_range' => 'Range di ore e giorni',
                             ])
                             ->default('string')
                             ->required(),
