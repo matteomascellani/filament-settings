@@ -46,6 +46,7 @@ class SettingForm
                                 'boolean' => 'Booleano',
                                 'json' => 'JSON',
                                 'hours_days_range' => 'Range di ore e giorni',
+                                'media' => 'Media (immagine/file)',
                             ])
                             ->default('string')
                             ->required(),

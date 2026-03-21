@@ -8,6 +8,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -171,8 +172,25 @@ class ValuesRelationManager extends RelationManager
     {
         $valueType = (string) ($this->getOwnerRecord()->value_type ?? 'string');
 
+        if ($valueType === 'media') {
+            $tmpPath = is_string($data['value_media_tmp'] ?? null) ? $data['value_media_tmp'] : null;
+            unset($data['value_media_tmp']);
+            unset($data['value_day_time_ranges']);
+
+            if ($tmpPath !== null && $tmpPath !== '') {
+                $disk = config('media-library.collection_disks.public', 'public');
+                $setting = $this->getOwnerRecord();
+                $setting->addMediaFromDisk($tmpPath, $disk)
+                    ->toMediaCollection('media_value', $disk);
+                $data['value'] = $setting->getFirstMediaUrl('media_value');
+            }
+
+            return $data;
+        }
+
         if ($valueType !== 'hours_days_range') {
             unset($data['value_day_time_ranges']);
+            unset($data['value_media_tmp']);
 
             return $data;
         }
@@ -313,6 +331,23 @@ class ValuesRelationManager extends RelationManager
                                 $component->state($this->decodeHoursDaysRanges((string) ($record->value ?? '')));
                             }
                         })
+                        ->columnSpanFull(),
+
+                    FileUpload::make('value_media_tmp')
+                        ->label('Carica file / immagine')
+                        ->disk(config('media-library.collection_disks.public', 'public'))
+                        ->visibility('public')
+                        ->image()
+                        ->imagePreviewHeight('100')
+                        ->maxSize(5120)
+                        ->visible(fn (): bool => $valueType === 'media')
+                        ->columnSpanFull(),
+
+                    TextInput::make('value')
+                        ->label('URL attuale')
+                        ->visible(fn (): bool => $valueType === 'media')
+                        ->readOnly()
+                        ->placeholder('Nessun file caricato — verrà impostato al salvataggio')
                         ->columnSpanFull(),
 
                     Select::make('settable_type')
