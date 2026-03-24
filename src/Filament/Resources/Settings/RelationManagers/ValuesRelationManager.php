@@ -182,7 +182,10 @@ class ValuesRelationManager extends RelationManager
                 $setting = $this->getOwnerRecord();
                 $setting->addMediaFromDisk($tmpPath, $disk)
                     ->toMediaCollection('media_value', $disk);
-                $data['value'] = $setting->getFirstMediaUrl('media_value');
+                // Store as relative path so the URL is rebuilt from APP_URL at read time,
+                // making it portable across environments (tunnel rotations, staging, production).
+                $absoluteUrl = $setting->getFirstMediaUrl('media_value');
+                $data['value'] = parse_url($absoluteUrl, PHP_URL_PATH) ?: $absoluteUrl;
             }
 
             return $data;
