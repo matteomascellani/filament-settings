@@ -340,8 +340,7 @@ class ValuesRelationManager extends RelationManager
                         ->label('Carica file / immagine')
                         ->disk(config('media-library.collection_disks.public', 'public'))
                         ->visibility('public')
-                        ->image()
-                        ->imagePreviewHeight('100')
+                        ->acceptedFileTypes(['image/*', 'application/pdf'])
                         ->maxSize(5120)
                         ->visible(fn (): bool => $valueType === 'media')
                         ->columnSpanFull(),
