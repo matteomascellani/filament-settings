@@ -9,3 +9,10 @@ if (! function_exists('filament_setting')) {
         return app(SettingsRepository::class)->value($key, $scope, $fallback);
     }
 }
+
+if (! function_exists('filament_setting_values')) {
+    function filament_setting_values(string $key, ?Model $scope = null): array
+    {
+        return app(SettingsRepository::class)->values($key, $scope);
+    }
+}

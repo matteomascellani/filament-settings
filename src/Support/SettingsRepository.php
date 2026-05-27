@@ -46,6 +46,37 @@ class SettingsRepository
     }
 
     /**
+     * Get all values for a setting as an associative array [name => value].
+     */
+    public function values(string $key, ?Model $scope = null): array
+    {
+        $setting = Setting::query()
+            ->where('key', $key)
+            ->where('is_active', true)
+            ->first();
+
+        if (! $setting) {
+            return [];
+        }
+
+        $query = $setting->values()
+            ->orderBy('sort')
+            ->orderBy('id');
+
+        if ($scope) {
+            $query->where('settable_type', $scope::class)
+                ->where('settable_id', $scope->getKey());
+        } else {
+            $query->whereNull('settable_type')
+                ->whereNull('settable_id');
+        }
+
+        $values = $query->get(['name', 'value']);
+
+        return $values->pluck('value', 'name')->toArray();
+    }
+
+    /**
      * For media-type settings, rewrite absolute URLs to use the current APP_URL.
      * This makes the value portable across environments (tunnels, staging, production).
      */
